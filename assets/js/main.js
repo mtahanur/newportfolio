@@ -131,13 +131,57 @@ themeButton.addEventListener('click', () => {
 })
 
 function SendMail() {
-    var params = {
-        from_name: document.getElementById("fullName").value,
-        email_id: document.getElementById("email_id").value,
-        message: document.getElementById("message").value
+    // Hata mesajlarını sıfırla
+    document.getElementById("fullNameError").innerText = "";
+    document.getElementById("emailError").innerText = "";
+    document.getElementById("messageError").innerText = "";
 
+    var fullName = document.getElementById("fullName").value;
+    var email = document.getElementById("email_id").value;
+    var message = document.getElementById("message").value;
+
+    var isValid = true;
+
+    if (!fullName) {
+        document.getElementById("fullNameError").innerText = "Ad Soyad alanı boş bırakılamaz.";
+        isValid = false;
     }
-    emailjs.send("service_m3htq3y", "template_h0afqaj", params).then(function (res) {
-        alert("Succes" + res.status);
-    })
+
+    if (!email) {
+        document.getElementById("emailError").innerText = "Email alanı boş bırakılamaz.";
+        isValid = false;
+    }
+
+    if (!message) {
+        document.getElementById("messageError").innerText = "Mesaj alanı boş bırakılamaz.";
+        isValid = false;
+    }
+
+    if (!isValid) {
+        showDialog("Lütfen tüm alanları doldurun.");
+        return;
+    }
+
+    var params = {
+        from_name: fullName,
+        email_id: email,
+        message: message
+    };
+
+    emailjs.send("service_m3htq3y", "template_h0afqaj", params).then(function(res) {
+        showDialog("Mesajınız başarıyla gönderildi!");
+    }).catch(function(err) {
+        showDialog("Mesajınız gönderilirken bir sorun oluştu, tekrar deneyiniz.");
+    });
+}
+
+function showDialog(message) {
+    document.getElementById("dialog-message").innerText = message;
+    document.getElementById("dialog-overlay").style.display = "block";
+    document.getElementById("dialog").style.display = "block";
+}
+
+function closeDialog() {
+    document.getElementById("dialog-overlay").style.display = "none";
+    document.getElementById("dialog").style.display = "none";
 }
